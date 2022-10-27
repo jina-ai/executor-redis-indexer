@@ -1,0 +1,8 @@
+jtype: RedisIndexer
+py_modules:
+  - executor.py
+metas:
+  name: RedisIndexer
+  description: 
+  url: 
+  keywords: []
