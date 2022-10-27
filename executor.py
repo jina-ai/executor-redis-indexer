@@ -1,5 +1,6 @@
-from jina import Executor, DocumentArray, requests
-from typing import Optional, Dict, Any, List, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
+
+from jina import DocumentArray, Executor, requests
 from jina.logging.logger import JinaLogger
 
 
@@ -15,9 +16,9 @@ class RedisIndexer(Executor):
         distance: str = 'COSINE',
         n_dim: int = 128,
         match_args: Optional[Dict] = None,
-        redis_config: Optional[Dict[str, Any]] = None, #TODO is None or empty dict
+        redis_config: Optional[Dict[str, Any]] = None,
         index_text: bool = False,
-        tag_indices: Optional[List[str]] = None, #TODO is None or empty list
+        tag_indices: Optional[List[str]] = None,
         batch_size: int = 64,
         method: str = 'HNSW',
         ef_construction: Optional[int] = None,
@@ -97,12 +98,12 @@ class RedisIndexer(Executor):
         :param kwargs: additional kwargs for the endpoint
 
         """
-        
+
         match_args = (
-                {**self._match_args, **parameters}
-                if parameters is not None
-                else self._match_args
-            )
+            {**self._match_args, **parameters}
+            if parameters is not None
+            else self._match_args
+        )
         docs.match(self._index, **match_args)
 
     @requests(on='/delete')
