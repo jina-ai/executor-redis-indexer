@@ -49,7 +49,7 @@ def test_reload_keep_state():
 def test_persistence(docs, docker_compose):
     f = Flow().add(
         uses=RedisIndexer,
-        uses_with={'index_name': 'test3', 'n_dim': 2},
+        uses_with={'index_name': 'test3', 'distance': 'L2'},
     )
     with f:
         f.index(docs)

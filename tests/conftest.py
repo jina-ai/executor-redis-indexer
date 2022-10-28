@@ -1,14 +1,13 @@
 import os
 import time
 
-import pytest
-
 import numpy as np
-
+import pytest
 from docarray import Document, DocumentArray
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 compose_yml = os.path.abspath(os.path.join(cur_dir, 'docker-compose.yml'))
+
 
 @pytest.fixture(scope='module')
 def docker_compose():
@@ -20,6 +19,7 @@ def docker_compose():
     os.system(
         f"docker-compose -f {compose_yml} --project-directory . down --remove-orphans"
     )
+
 
 @pytest.fixture(scope='module')
 def docs():
