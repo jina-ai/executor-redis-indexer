@@ -1,24 +1,14 @@
 import os
 
-import pytest
-from docarray.array.redis import DocumentArrayRedis
-from docarray import Document, DocumentArray
-
 import numpy as np
-
+import pytest
+from docarray import Document, DocumentArray
+from docarray.array.redis import DocumentArrayRedis
 from executor import RedisIndexer
+from helper import assert_document_arrays_equal
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 compose_yml = os.path.abspath(os.path.join(cur_dir, '../docker-compose.yml'))
-
-
-def assert_document_arrays_equal(arr1, arr2):
-    assert len(arr1) == len(arr2)
-    for d1, d2 in zip(arr1, arr2):
-        assert d1.id == d2.id
-        assert d1.content == d2.content
-        assert d1.chunks == d2.chunks
-        assert d1.matches == d2.matches
 
 
 @pytest.fixture
@@ -115,21 +105,13 @@ def test_filter(docker_compose):
     assert result[0].tags['x'] == 0.8
 
 
-def test_persistence(docs, docker_compose):
-    indexer1 = RedisIndexer(index_name='test6', distance='L2')
-    indexer1.index(docs)
-    indexer1.close()
-    indexer2 = RedisIndexer(index_name='test6', distance='L2')
-    assert_document_arrays_equal(indexer2._index, docs)
-
-
 @pytest.mark.parametrize(
     'metric, metric_name',
     [('L2', 'euclid_similarity'), ('COSINE', 'cosine_similarity')],
 )
 def test_search(metric, metric_name, docs, docker_compose):
     # test general/normal case
-    indexer = RedisIndexer(index_name='test7', distance=metric)
+    indexer = RedisIndexer(index_name='test6', distance=metric)
     indexer.index(docs)
     query = DocumentArray([Document(embedding=np.random.rand(128)) for _ in range(10)])
     indexer.search(query)
@@ -141,7 +123,7 @@ def test_search(metric, metric_name, docs, docker_compose):
 
 @pytest.mark.parametrize('limit', [1, 2, 3])
 def test_search_with_match_args(docs, limit, docker_compose):
-    indexer = RedisIndexer(index_name='test8', match_args={'limit': limit})
+    indexer = RedisIndexer(index_name='test7', match_args={'limit': limit})
     indexer.index(docs)
     assert 'limit' in indexer._match_args.keys()
     assert indexer._match_args['limit'] == limit
@@ -156,7 +138,7 @@ def test_search_with_match_args(docs, limit, docker_compose):
     docs[2].tags['text'] = 'hello'
 
     indexer = RedisIndexer(
-        index_name='test9',
+        index_name='test8',
         columns={'text': 'str'},
         match_args={
             'filter': '@text:hello',
@@ -168,10 +150,10 @@ def test_search_with_match_args(docs, limit, docker_compose):
     indexer.search(query)
     assert len(query[0].matches) == 1
     assert query[0].matches[0].tags['text'] == 'hello'
-    
+
 
 def test_clear(docs, docker_compose):
-    indexer = RedisIndexer(index_name='test10')
+    indexer = RedisIndexer(index_name='test9')
     indexer.index(docs)
     assert len(indexer._index) == 6
     indexer.clear()
@@ -180,9 +162,7 @@ def test_clear(docs, docker_compose):
 
 def test_columns(docker_compose):
     n_dim = 3
-    indexer = RedisIndexer(
-        index_name='test11', n_dim=n_dim, columns={'price': 'float'}
-    )
+    indexer = RedisIndexer(index_name='test10', n_dim=n_dim, columns={'price': 'float'})
 
     docs = DocumentArray(
         [

@@ -1,8 +1,7 @@
-from jina import Flow
-from docarray import Document
 import numpy as np
-
+from docarray import Document
 from executor import RedisIndexer
+from jina import Flow
 
 
 def test_replicas(docker_compose):
@@ -10,10 +9,19 @@ def test_replicas(docker_compose):
 
     f = Flow().add(
         uses=RedisIndexer,
-        uses_with={'index_name': 'test1', 'n_dim': n_dim, 'distance':'L2', 'ef_construction':256, 'm':32, 'ef_runtime':256},
+        uses_with={
+            'index_name': 'test1',
+            'n_dim': n_dim,
+            'distance': 'L2',
+            'ef_construction': 256,
+            'm': 32,
+            'ef_runtime': 256,
+        },
     )
 
-    docs_index = [Document(id=str(i), embedding=np.random.random(n_dim)) for i in range(1000)]
+    docs_index = [
+        Document(id=str(i), embedding=np.random.random(n_dim)) for i in range(1000)
+    ]
 
     docs_query = docs_index[:100]
 
@@ -45,10 +53,19 @@ def test_replicas_reindex(docker_compose):
 
     f = Flow().add(
         uses=RedisIndexer,
-        uses_with={'index_name': 'test2', 'n_dim': n_dim, 'distance':'L2', 'ef_construction':256, 'm':32, 'ef_runtime':256},
+        uses_with={
+            'index_name': 'test2',
+            'n_dim': n_dim,
+            'distance': 'L2',
+            'ef_construction': 256,
+            'm': 32,
+            'ef_runtime': 256,
+        },
     )
 
-    docs_index = [Document(id=f'd{i}', embedding=np.random.random(n_dim)) for i in range(1000)]
+    docs_index = [
+        Document(id=f'd{i}', embedding=np.random.random(n_dim)) for i in range(1000)
+    ]
 
     docs_query = docs_index[:100]
 

@@ -1,12 +1,10 @@
-import operator
-
 import numpy as np
 import pytest
-
 from docarray import Document, DocumentArray
+from executor import RedisIndexer
+from helper import assert_document_arrays_equal, numeric_operators_redis
 from jina import Flow
 
-from executor import RedisIndexer
 
 def test_flow(docker_compose):
     f = Flow().add(
@@ -44,18 +42,20 @@ def test_reload_keep_state():
         first_search = f.search(inputs=docs)
 
     with f:
-        second_search = f.search(inputs=docs)    
+        second_search = f.search(inputs=docs)
         assert len(first_search[0].matches) == len(second_search[0].matches)
 
 
-numeric_operators_redis = {
-    'gte': operator.ge,
-    'gt': operator.gt,
-    'lte': operator.le,
-    'lt': operator.lt,
-    'eq': operator.eq,
-    'ne': operator.ne,
-}
+def test_persistence(docs, docker_compose):
+    f = Flow().add(
+        uses=RedisIndexer,
+        uses_with={'index_name': 'test3', 'n_dim': 2},
+    )
+    with f:
+        f.index(docs)
+
+    indexer = RedisIndexer(index_name='test3', distance='L2')
+    assert_document_arrays_equal(indexer._index, docs)
 
 
 @pytest.mark.parametrize(
@@ -67,9 +67,8 @@ numeric_operators_redis = {
         (lambda threshold: f'@price:[-inf ({threshold}] ', 'lt'),
         (lambda threshold: f'@price:[{threshold} {threshold}] ', 'eq'),
         (lambda threshold: f'(- @price:[{threshold} {threshold}]) ', 'ne'),
-    ]
+    ],
 )
-    
 def test_filtering(filter_gen, operator, docker_compose):
     n_dim = 3
 
@@ -97,7 +96,10 @@ def test_filtering(filter_gen, operator, docker_compose):
             indexed_docs = f.search(doc_query, parameters={'filter': filter_})
 
             assert len(indexed_docs[0].matches) > 0
-            
+
             assert all(
-                [numeric_operators_redis[operator](r.tags['price'], threshold) for r in indexed_docs[0].matches]
+                [
+                    numeric_operators_redis[operator](r.tags['price'], threshold)
+                    for r in indexed_docs[0].matches
+                ]
             )
