@@ -159,7 +159,5 @@ class RedisIndexer(Executor):
 
     def close(self) -> None:
         super().close()
-        
-        # TODO: find out how to make this work with sync removed
         self._index.sync()
         del self._index
