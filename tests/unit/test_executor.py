@@ -115,11 +115,12 @@ def test_filter(docker_compose):
     assert result[0].tags['x'] == 0.8
 
 
-# def test_persistence(docs, docker_compose):
-#     indexer1 = RedisIndexer(index_name='test6', distance='L2')
-#     indexer1.index(docs)
-#     indexer2 = RedisIndexer(index_name='test6', distance='L2')
-#     assert_document_arrays_equal(indexer2._index, docs)
+def test_persistence(docs, docker_compose):
+    indexer1 = RedisIndexer(index_name='test6', distance='L2')
+    indexer1.index(docs)
+    indexer1.close()
+    indexer2 = RedisIndexer(index_name='test6', distance='L2')
+    assert_document_arrays_equal(indexer2._index, docs)
 
 
 @pytest.mark.parametrize(
