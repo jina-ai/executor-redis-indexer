@@ -3,6 +3,6 @@ py_modules:
   - executor.py
 metas:
   name: RedisIndexer
-  description: 
-  url: 
-  keywords: []
+  description: RedisIndexer indexes Documents in an Redis server DocumentArray with `storage='redis'`
+  url: https://github.com/jina-ai/executor-redis-indexer
+  keywords: ['indexer', 'redis', 'ann', 'similarity_search', 'database']
