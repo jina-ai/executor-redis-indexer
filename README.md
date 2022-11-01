@@ -7,7 +7,7 @@ https://docarray.jina.ai/advanced/document-store/redis/
 
 
 ## Setup
-`RedisIndexer` requires a running Redis service. Make sure a service is up and running and your indexer 
+`RedisIndexer` requires a running Redis service, with `redisearch` module version 2.6 or higher. Make sure a service is up and running and your indexer 
 is configured to use it before starting to index documents. For quick testing, you can run a containerized version 
 locally using docker-compose :
 
@@ -15,7 +15,7 @@ locally using docker-compose :
 docker-compose -f tests/docker-compose.yml up -d
 ```
 
-Note that if you run an `Redis` service locally and try to run the `RedisIndexer` via `docker`, you 
+Note that if you run a `Redis` service locally and try to run the `RedisIndexer` via `docker`, you 
 have to specify `'host': 'host.docker.internal'` instead of `localhost`, otherwise the client will not be 
 able to reach the service from within the container.
 
@@ -30,7 +30,7 @@ from docarray import Document
 import numpy as np
 	
 f = Flow().add(
-    uses='jinahub://RedisIndexer',
+    uses='jinahub+docker://RedisIndexer/latest',
     uses_with={
         'host': 'localhost',
         'port': 6379,
@@ -66,7 +66,7 @@ with f:
 
 ## CRUD Operations
 
-You can perform CRUD operations (create, read, update and delete) using the respective endpoints:
+You can perform CRUD operations (create, read, update and delete) using the following endpoints:
 
 - `/index`: Add new data to `Redis`. 
 - `/search`: Query the `Redis` index (created in `/index`) with your Documents.
@@ -162,12 +162,10 @@ You can use `match_args` argument to pass arguments to the `match` function as b
 during `/search` endpoint.
 
 ```python
-f =  Flow().add(
-     uses='jinahub://RedisIndexer',
-     uses_with={
-         'match_args': {
-             'metric': 'euclidean',
-             'use_scipy': True}})
+f = Flow().add(
+    uses=RedisIndexer,
+    uses_with={'match_args': {'limit': 10, 'filter': '@price:[5 inf] '}},
+)
 ```
 
 - For more details about overriding configurations, please refer to [this page](https://docs.jina.ai/fundamentals/executor/executor-in-flow/#special-executor-attributes).
