@@ -72,6 +72,7 @@ class RedisIndexer(Executor):
                 'block_size': block_size,
                 'initial_cap': initial_cap,
                 'columns': columns,
+                'list_like': False,
             },
         )
 
