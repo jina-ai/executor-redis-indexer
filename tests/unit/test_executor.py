@@ -104,11 +104,8 @@ def test_filter(docker_compose):
     assert result[0].tags['x'] == 0.8
 
 
-@pytest.mark.parametrize(
-    'metric, metric_name',
-    [('L2', 'euclid_distance'), ('COSINE', 'cosine_distance')],
-)
-def test_search(metric, metric_name, docs, docker_compose):
+@pytest.mark.parametrize('metric', ['L2', 'COSINE'],)
+def test_search(metric, docs, docker_compose):
     # test general/normal case
     indexer = RedisIndexer(index_name='test6', distance=metric)
     indexer.index(docs)
@@ -116,10 +113,9 @@ def test_search(metric, metric_name, docs, docker_compose):
     indexer.search(query)
 
     for doc in query:
-        similarities = [t[metric_name].value for t in doc.matches[:, 'scores']]
-        print(f"similarities = {similarities}")
-        assert sorted(similarities) == similarities
-        assert len(similarities) == len(docs)
+        distances = [t['score'].value for t in doc.matches[:, 'scores']]
+        assert sorted(distances) == distances
+        assert len(distances) == len(docs)
 
 
 @pytest.mark.parametrize('limit', [1, 2, 3])
