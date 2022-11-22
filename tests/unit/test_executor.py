@@ -15,12 +15,12 @@ compose_yml = os.path.abspath(os.path.join(cur_dir, '../docker-compose.yml'))
 def docs():
     return DocumentArray(
         [
-            Document(id='doc1', embedding=np.random.rand(128)),
-            Document(id='doc2', embedding=np.random.rand(128)),
-            Document(id='doc3', embedding=np.random.rand(128)),
-            Document(id='doc4', embedding=np.random.rand(128)),
-            Document(id='doc5', embedding=np.random.rand(128)),
-            Document(id='doc6', embedding=np.random.rand(128)),
+            Document(id='doc1', embedding=np.random.rand(3)),
+            Document(id='doc2', embedding=np.random.rand(3)),
+            Document(id='doc3', embedding=np.random.rand(3)),
+            Document(id='doc4', embedding=np.random.rand(3)),
+            Document(id='doc5', embedding=np.random.rand(3)),
+            Document(id='doc6', embedding=np.random.rand(3)),
         ]
     )
 
@@ -106,7 +106,7 @@ def test_filter(docker_compose):
 
 @pytest.mark.parametrize(
     'metric, metric_name',
-    [('L2', 'euclid_similarity'), ('COSINE', 'cosine_similarity')],
+    [('L2', 'euclid_distance'), ('COSINE', 'cosine_distance')],
 )
 def test_search(metric, metric_name, docs, docker_compose):
     # test general/normal case
@@ -117,7 +117,9 @@ def test_search(metric, metric_name, docs, docker_compose):
 
     for doc in query:
         similarities = [t[metric_name].value for t in doc.matches[:, 'scores']]
-        assert sorted(similarities, reverse=True) == similarities
+        print(f"similarities = {similarities}")
+        assert sorted(similarities) == similarities
+        assert len(similarities) == len(docs)
 
 
 @pytest.mark.parametrize('limit', [1, 2, 3])
