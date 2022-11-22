@@ -1,6 +1,0 @@
-
-manifest_version: 1
-name: RedisIndexer
-description: RedisIndexer indexes Documents in an Redis server DocumentArray with `storage='redis'`
-url: https://github.com/jina-ai/executor-redis-indexer
-keywords: ['indexer', 'redis', 'ann', 'similarity_search', 'database']
