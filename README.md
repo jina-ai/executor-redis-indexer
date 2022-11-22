@@ -7,7 +7,7 @@ https://docarray.jina.ai/advanced/document-store/redis/
 
 
 ## Setup
-`RedisIndexer` requires a running Redis service, with `redisearch` module version 2.6 or higher. Make sure a service is up and running and your indexer 
+`RedisIndexer` requires a running Redis service, with `RediSearch` module version 2.6 or higher. Make sure a service is up and running and your indexer 
 is configured to use it before starting to index documents. For quick testing, you can run a containerized version 
 locally using docker-compose :
 
@@ -30,7 +30,7 @@ from docarray import Document
 import numpy as np
 	
 f = Flow().add(
-    uses='jinahub+docker://RedisIndexer/latest',
+    uses='jinahub+docker://RedisIndexer',
     uses_with={
         'host': 'localhost',
         'port': 6379,
@@ -163,7 +163,7 @@ during `/search` endpoint.
 
 ```python
 f = Flow().add(
-    uses=RedisIndexer,
+    uses='jinahub://RedisIndexer',
     uses_with={'match_args': {'limit': 10, 'filter': '@price:[5 inf] '}},
 )
 ```
