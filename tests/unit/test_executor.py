@@ -104,7 +104,7 @@ def test_filter(docker_compose):
     assert result[0].tags['x'] == 0.8
 
 
-@pytest.mark.parametrize('metric', ['L2', 'COSINE'],)
+@pytest.mark.parametrize('metric', ['L2', 'IP', 'COSINE'],)
 def test_search(metric, docs, docker_compose):
     # test general/normal case
     indexer = RedisIndexer(index_name='test6', distance=metric)
