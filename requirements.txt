@@ -1,2 +1,2 @@
-docarray[redis]>=0.19.2
+docarray[redis]>=0.20.0
 jina>=3.11.2
