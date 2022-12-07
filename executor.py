@@ -72,6 +72,7 @@ class RedisIndexer(Executor):
                 'block_size': block_size,
                 'initial_cap': initial_cap,
                 'columns': columns,
+                'list_like': False,
             },
         )
 
@@ -135,7 +136,7 @@ class RedisIndexer(Executor):
                 )
 
     @requests(on='/filter')
-    def filter(self, parameters: str, **kwargs):
+    def filter(self, parameters: Dict, **kwargs):
         """
         Query documents from the indexer by the filter `query` object in parameters. The `query` object must follow the
         specifications in the `find` method of `DocumentArray` using Redis: https://docarray.jina.ai/advanced/document-store/redis/#search-by-filter-query
